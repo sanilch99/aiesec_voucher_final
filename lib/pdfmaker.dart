@@ -22,22 +22,66 @@ class pdfMaker {
 
   Future<PdfImage> getImage1() async{
     Uint8List img =
-    (await rootBundle.load('assets/logo.png')).buffer.asUint8List();
+    (await rootBundle.load('assets/Untitled2.png')).buffer.asUint8List();
 
     final image = PdfImage.file(pdf.document,
-        bytes: img, orientation: PdfImageOrientation.topLeft);
+        bytes: img);
 
     return image;
   }
 
   Future<PdfImage> getImage2() async{
     Uint8List signimg=
-    (await rootBundle.load('assets/sign.png')).buffer.asUint8List();
+    (await rootBundle.load('assets/Untitled.png')).buffer.asUint8List();
 
     final signImage=PdfImage.file(pdf.document,
         bytes: signimg);
 
     return signImage;
+  }
+  String getMon(String d){
+    int day=int.parse(d.substring(0,2));
+    String mon=d.substring(3,5);
+    String monname;
+    switch(mon){
+      case '01':
+        monname='JAN';
+        break;
+      case '02':
+        monname='FEB';
+        break;
+      case '03':
+        monname='MAR';
+        break;
+      case '04':
+        monname='APR';
+        break;
+      case '05':
+        monname='MAY';
+        break;
+      case '06':
+        monname='JUN';
+        break;
+      case '07':
+        monname='JUL';
+        break;
+      case '08':
+        monname='AUG';
+        break;
+      case '09':
+        monname='SEP';
+        break;
+      case '10':
+        monname='OCT';
+        break;
+      case '11':
+        monname='NOV';
+        break;
+      case '12':
+        monname='DEC';
+        break;
+    }
+    return monname;
   }
 
   String getDate(String d){
@@ -46,40 +90,40 @@ class pdfMaker {
     String monname;
     switch(mon){
       case '01':
-        monname='Jan';
+        monname='JAN';
         break;
       case '02':
-        monname='Feb';
+        monname='FEB';
         break;
       case '03':
-        monname='Mar';
+        monname='MAR';
         break;
       case '04':
-        monname='Apr';
+        monname='APR';
         break;
       case '05':
-        monname='May';
+        monname='MAY';
         break;
       case '06':
-        monname='Jun';
+        monname='JUN';
         break;
       case '07':
-        monname='Jul';
+        monname='JUL';
         break;
       case '08':
-        monname='Aug';
+        monname='AUG';
         break;
       case '09':
-        monname='Sept';
+        monname='SEP';
         break;
       case '10':
-        monname='Oct';
+        monname='OCT';
         break;
       case '11':
-        monname='Nov';
+        monname='NOV';
         break;
       case '12':
-        monname='Dec';
+        monname='DEC';
         break;
     }
     String fd=day.toString()+' '+monname;
@@ -89,13 +133,25 @@ class pdfMaker {
   writeOnPdf(PdfImage image1,PdfImage image2) async {
 
     String dateFull=getDate(voucherDate);
+    String mon=getMon(voucherDate);
+    var data = await rootBundle.load("assets/fonts/Roboto-Bold.ttf");
+
+
     String fileName='$voucherNo'+'-'+'$voucherTo'+' '+'$dateFull';
+    if(voucherNo.length==3){
+      voucherNo=voucherNo;
+    }else if(voucherNo.length==2){
+      voucherNo="0"+voucherNo;
+    }else if(voucherNo.length==1){
+      voucherNo="00"+voucherNo;
+    }
+    
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         margin: pw.EdgeInsets.all(0),
         build: (pw.Context context) {
           return pw.Padding(
-              padding: pw.EdgeInsets.only(top: 20, bottom: 20),
+              padding: pw.EdgeInsets.only(top: 16, bottom: 16),
               child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.stretch,
                   children: <pw.Widget>[
@@ -104,14 +160,16 @@ class pdfMaker {
                       child: pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: <pw.Widget>[
-                            pw.Image(image1,
-                                width: 0.005,
-                                height: 0.001,
-                                fit: pw.BoxFit.fitHeight),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 15),
+                              child: pw.Image(image1,
+                                  height: 20,
+                                  width: 150,
+                                  fit: pw.BoxFit.fill),
+                            ),
                             pw.Text('VOUCHER',
                                 style: pw.TextStyle(
                                   fontSize: 30,
-                                  fontWeight: pw.FontWeight.bold,
                                 ))
                           ]),
                     ),
@@ -132,9 +190,9 @@ class pdfMaker {
                           )
                         ]),
                     pw.Padding(
-                      padding: pw.EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      padding: pw.EdgeInsets.fromLTRB(16, 2, 16, 0),
                       child: pw.Text(
-                        '7C, Beside Shree Panchratna Hotel,\n Near Sohrab Hall, Tadiwala Road, Pune-411001\nMobile:  +919029543880\nEmail: vandana.krishnan@aiesec.net',
+                        '7C, Beside Shree Panchratna Hotel,\n Near Sohrab Hall, Tadiwala Road,\n Pune-411001\nMobile:  +919029543880\nEmail: vandana.krishnan@aiesec.net',
                         textAlign: pw.TextAlign.right,
                       ),
                     ),
@@ -159,7 +217,7 @@ class pdfMaker {
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                                 children: <pw.Widget>[
-                                  pw.Text('Voucher No: AIP/2020/$voucherNo'),
+                                  pw.Text('Voucher No: AIP/${mon}2020/$voucherNo'),
                                   pw.Text('Voucher Date: $voucherDate')
                                 ])
                           ]),
@@ -169,7 +227,7 @@ class pdfMaker {
                     ),
 
                     pw.Container(
-                        color: PdfColor.fromRYB(0, 0, 1),
+                        color: PdfColor.fromHex("#0070c0"),
                         height: 25,
                         child: pw.Row(
 
@@ -184,6 +242,7 @@ class pdfMaker {
                                     pw.Text('Item',
                                         style:
                                         pw.TextStyle(
+                                            font: pw.Font.ttf(data),
                                             color: PdfColor.fromRYB(0, 0, 0),
                                             fontWeight: pw.FontWeight.bold)
                                     ),
@@ -213,7 +272,10 @@ class pdfMaker {
                                   width: 150,
                                   child: pw.Text(
                                       item,
-                                      maxLines: 2
+                                      maxLines: 2,
+                                      style: pw.TextStyle(
+                                        font: pw.Font.ttf(data)
+                                      )
                                   )
                               ),
 
@@ -225,7 +287,11 @@ class pdfMaker {
                                   height: 20,
                                   width: 150,
                                   child: pw.Text(
-                                    amount,
+                                   "\u20B9$amount",
+                                    style: pw.TextStyle(
+                                      font:pw.Font.ttf(data) ,
+                                      fontWeight: pw.FontWeight.bold
+                                    )
                                   )
                               )
                             ]
@@ -247,7 +313,7 @@ class pdfMaker {
                         child: pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.end,
                             children: <pw.Widget>[
-                              pw.Image(image2),
+                              pw.Image(image2,height: 50,width:100,fit: pw.BoxFit.fill),
 
                             ]
                         )

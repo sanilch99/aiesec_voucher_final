@@ -1,3 +1,4 @@
+import 'package:aiesecvoucherfinal/Splash.dart';
 import 'package:flutter/material.dart';
 import 'package:aiesecvoucherfinal/Home.dart';
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: Home(),
+      home: SplashScreen(),
     );
   }
 }
